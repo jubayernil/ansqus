@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ask The Correct Question</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@600&display=swap");
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: #fff;
+        padding: 20px 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        text-align: center;
+        width: 400px;
+      }
+
+      .game-title {
+        font-family: "Poppins", sans-serif;
+        font-size: 2.5em;
+        background: linear-gradient(90deg, #ff6ec7, #a35de0, #00c3c3);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+        padding: 10px 20px;
+        border-radius: 8px;
+        display: inline-block;
+      }
+
+      #remaining-questions {
+        font-size: 1.2em;
+        color: #a35de0;
+        margin-bottom: 20px;
+      }
+
+      #quiz-section {
+        margin-top: 20px;
+        display: none; /* Initially hide the quiz section */
+      }
+
+      #hint-section {
+        margin-top: 10px;
+      }
+
+      #answer {
+        font-size: 1.2em;
+        color: #a35de0;
+      }
+
+      #user-question {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #a35de0;
+        border-radius: 8px;
+        font-size: 1em;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #a35de0;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1em;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #ff6ec7;
+      }
+
+      #result {
+        margin-top: 20px;
+        font-size: 1.1em;
+        color: #333;
+      }
+
+      #timer {
+        margin-top: 20px;
+        font-size: 1.5em;
+        color: #a35de0;
+      }
+
+      #next-btn {
+        display: none;
+      }
+
+      #report {
+        margin-top: 20px;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #report p {
+        font-size: 1em;
+        color: #555;
+        margin: 5px 0;
+      }
+
+      #restart-btn {
+        background-color: #00c3c3;
+        display: none;
+      }
+
+      #restart-btn:hover {
+        background-color: #007bff;
+      }
+
+      /* Modal styling */
+      .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 350px;
+        border-radius: 10px;
+        text-align: center;
+        display: grid;
+        gap: 15px;
+      }
+
+      .input-group {
+        display: grid;
+        gap: 5px;
+      }
+
+      .modal-content label {
+        font-weight: bold;
+        color: #a35de0;
+      }
+
+      .modal-content input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #a35de0;
+        border-radius: 5px;
+        font-size: 1em;
+        box-sizing: border-box; /* Ensures padding is included in the width */
+      }
+
+      .modal-content .info-note {
+        font-size: 0.9em;
+        color: #888;
+        margin-top: -10px;
+      }
+
+      .modal-content .game-rules {
+        text-align: left;
+      }
+
+      .modal-content .game-rules h3 {
+        margin-top: 15px;
+        font-size: 1.2em;
+        color: #a35de0;
+      }
+
+      .modal-content .game-rules ul {
+        padding-left: 20px;
+        list-style: disc;
+      }
+
+      .modal-content button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #a35de0;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 1em;
+      }
+
+      .modal-content button:hover {
+        background-color: #ff6ec7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="game-title">Ask The Correct Question</h1>
+      <p id="remaining-questions"></p>
+      <div id="quiz-section">
+        <p id="answer"></p>
+        <div id="hint-section">
+          <p>Show the question for:</p>
+          <button onclick="showHint(0.25)">0.25 sec</button>
+          <button onclick="showHint(0.5)">0.5 sec</button>
+          <button onclick="showHint(1)">1 sec</button>
+          <button onclick="showHint(2)">2 sec</button>
+        </div>
+        <input
+          type="text"
+          id="user-question"
+          placeholder="Type your question here..."
+          oninput="updatePercentage()"
+        />
+        <p id="result"></p>
+        <p id="timer"></p>
+      </div>
+      <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+      <button id="restart-btn" onclick="startAgain()" style="display: none">
+        Start Again
+      </button>
+      <button id="submit-btn" onclick="submitResult()" style="display: none">
+        Submit Result
+      </button>
+      <div id="report" style="display: none"></div>
+      <div id="loading" style="display: none">Submitting data...</div>
+    </div>
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <h2>Welcome to the Game!</h2>
+        <div class="input-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" placeholder="e.g. John" />
+        </div>
+        <div class="input-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" placeholder="e.g. john@axa.co.jp" />
+        </div>
+        <p class="info-note">
+          *Personal information will be removed after the game
+        </p>
+        <div class="game-rules">
+          <h3>Game Rules</h3>
+          <ul>
+            <li>
+              The goal of the game is to match the predefined question with the
+              given answer.
+            </li>
+            <li>
+              For example, if the answer is <b>"fine"</b>, the correct question
+              could be <b>"how are you?"</b>.
+            </li>
+            <li>
+              As you type your question, the match percentage will be shown.
+            </li>
+            <li>
+              If your question matches <b>100%</b>, you will automatically move
+              to the next question.
+            </li>
+            <li>
+              If the time runs out, you won't be able to answer any more
+              questions.
+            </li>
+          </ul>
+        </div>
+        <button onclick="submitDetails()">Let's Start</button>
+      </div>
+    </div>
+    <script>
+      const encodedPredefinedQuestions = [
+        "dG9tYXIgbmFtIGtpPw==",
+        "dHVtaSBrZW1vbiBhY2hvPw==",
+        "dHVtaSBraSBraGF1Pw==",
+      ];
+
+      const encodedAnswers = ["anViYXllcg==", "dmFsbw==", "a29sYQ=="];
+
+      let predefinedQuestions = [];
+      let answers = [];
+
+      encodedPredefinedQuestions.forEach((encodedQuestion, index) => {
+        predefinedQuestions.push(atob(encodedQuestion));
+        answers.push(atob(encodedAnswers[index]));
+      });
+
+      let currentQuestionIndex = 0;
+      let startTime;
+      let totalStartTime;
+      const totalQuizTime = 10 * 60 * 1000; // 10 minutes in milliseconds
+      let intervalId;
+      let questionTimes = [];
+      let retryCount = 0; // Initialize retry count
+
+      document.getElementById(
+        "answer"
+      ).textContent = `Answer: ${answers[currentQuestionIndex]}`;
+
+      updateRemainingQuestionsText();
+
+      function calculateMatchPercentage(str1, str2) {
+        const length = Math.max(str1.length, str2.length);
+        let matches = 0;
+
+        for (let i = 0; i < length; i++) {
+          if (str1[i] === str2[i]) {
+            matches++;
+          }
+        }
+
+        return ((matches / length) * 100).toFixed(2);
+      }
+
+      function nextQuestion() {
+        const questionTime = Date.now() - startTime;
+        questionTimes.push(questionTime);
+
+        currentQuestionIndex++;
+        if (currentQuestionIndex >= predefinedQuestions.length) {
+          endQuiz();
+          return;
+        }
+        document.getElementById(
+          "answer"
+        ).textContent = `Answer: ${answers[currentQuestionIndex]}`;
+        document.getElementById("user-question").value = "";
+        document.getElementById("result").textContent = "";
+        document.getElementById("next-btn").style.display = "none";
+        updateRemainingQuestionsText();
+        startTime = Date.now(); // Reset start time for the next question
+      }
+
+      function updatePercentage() {
+        const userQuestion = document
+          .getElementById("user-question")
+          .value.toLowerCase();
+        const percentage = calculateMatchPercentage(
+          predefinedQuestions[currentQuestionIndex],
+          userQuestion
+        );
+        const resultElement = document.getElementById("result");
+
+        resultElement.textContent = `Match percentage: ${percentage}%`;
+
+        if (percentage === "100.00") {
+          const questionTime = Date.now() - startTime;
+          resultElement.textContent = `100% match - Correct! Time: ${(
+            questionTime / 1000
+          ).toFixed(2)} seconds`;
+          resultElement.style.color = "green";
+          document.getElementById("next-btn").style.display = "block";
+        } else {
+          resultElement.style.color = "red";
+          document.getElementById("next-btn").style.display = "none";
+        }
+      }
+
+      function startTimer() {
+        totalStartTime = Date.now(); // Initialize the start time
+        intervalId = setInterval(() => {
+          const elapsed = Date.now() - totalStartTime;
+          const remaining = totalQuizTime - elapsed;
+
+          if (remaining <= 0) {
+            clearInterval(intervalId);
+            document.getElementById("timer").textContent = "0:00.000";
+            endQuiz(true); // Pass true to indicate time has ended
+          } else {
+            document.getElementById("timer").textContent =
+              formatTime(remaining);
+          }
+        }, 10);
+      }
+
+      function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const milliseconds = ms % 1000;
+        return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}.${milliseconds
+          .toString()
+          .padStart(3, "0")}`;
+      }
+
+      function endQuiz(timeEnded = false) {
+        document.getElementById("user-question").disabled = true;
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("restart-btn").style.display = "block";
+        document.getElementById("submit-btn").style.display = "block"; // Show the submit button
+        clearInterval(intervalId);
+        showReport(timeEnded);
+      }
+
+      function showReport(timeEnded) {
+        const reportElement = document.getElementById("report");
+        reportElement.style.display = "block";
+        reportElement.innerHTML = ""; // Clear previous report
+
+        if (timeEnded) {
+          reportElement.innerHTML = `<p>You could not answer in time.</p>`;
+        } else {
+          const totalTime = (Date.now() - totalStartTime) / 1000;
+          reportElement.innerHTML = `<p>Total Time: ${totalTime.toFixed(
+            2
+          )} seconds</p>`;
+        }
+        reportElement.innerHTML += `<p>Number of retries: ${retryCount}</p>`; // Display retry count
+        document.getElementById("remaining-questions").textContent =
+          "Questions remaining: 0";
+      }
+
+      function submitResult() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+
+        const data = {
+          name: name,
+          email: email,
+          totalTime: (Date.now() - totalStartTime) / 1000,
+          totalTries: retryCount,
+        };
+
+        const headers = new Headers();
+        headers.append("Content-Type", "application/json");
+
+        const options = {
+          method: "POST",
+          headers: headers,
+          mode: "cors",
+          body: JSON.stringify(data),
+        };
+
+        const submitButton = document.getElementById("submit-btn");
+        const loadingElement = document.getElementById("loading");
+
+        submitButton.disabled = true; // Disable the submit button
+        loadingElement.style.display = "block"; // Show the loading element
+
+        fetch(
+          "https://636af7a6c07d8f936dab1544.mockapi.io/api/v1/results",
+          options
+        )
+          .then((response) => {
+            if (response.ok) {
+              console.log("Data submitted successfully");
+              alert("Result submitted successfully!");
+            } else {
+              console.error("Error submitting data");
+              alert("Error submitting result.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error submitting result.");
+          })
+          .finally(() => {
+            submitButton.disabled = true; // Ensure the submit button remains disabled
+            loadingElement.style.display = "none"; // Hide the loading element
+          });
+      }
+
+      function startAgain() {
+        retryCount++; // Increment retry count
+        currentQuestionIndex = 0;
+        questionTimes = [];
+        document.getElementById(
+          "answer"
+        ).textContent = `Answer: ${answers[currentQuestionIndex]}`;
+        document.getElementById("user-question").value = "";
+        document.getElementById("user-question").disabled = false;
+        document.getElementById("result").textContent = "";
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("restart-btn").style.display = "none";
+        document.getElementById("submit-btn").style.display = "none"; // Hide the submit button
+        document.getElementById("report").style.display = "none";
+        updateRemainingQuestionsText();
+        startTimer(); // Restart the timer
+        startTime = Date.now(); // Initialize the start time for the first question
+      }
+
+      function showHint(seconds, button) {
+        const hintElement = document.createElement("p");
+        hintElement.id = "hint";
+        hintElement.textContent = `Question: ${predefinedQuestions[currentQuestionIndex]}`;
+        document
+          .getElementById("quiz-section")
+          .insertBefore(hintElement, document.getElementById("user-question"));
+
+        setTimeout(() => {
+          document.getElementById("quiz-section").removeChild(hintElement);
+        }, seconds * 1000);
+
+        const penaltyTime =
+          seconds === 0.25
+            ? 1000
+            : seconds === 0.5
+            ? 2000
+            : seconds === 1
+            ? 3000
+            : 6000;
+        totalStartTime -= penaltyTime; // Correctly subtract penalty time
+
+        button.disabled = true; // Disable the clicked button
+        setTimeout(() => {
+          button.disabled = false; // Re-enable the button after the penalty time
+        }, penaltyTime);
+      }
+
+      function submitDetails() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+
+        if (name && validateEmail(email)) {
+          document.getElementById("modal").style.display = "none";
+          document.getElementById("quiz-section").style.display = "block";
+          startTimer(); // Start the timer only after details are submitted
+          startTime = Date.now(); // Initialize the start time for the first question
+        } else {
+          alert("Please enter a valid name and email.");
+        }
+      }
+
+      function validateEmail(email) {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+      }
+
+      window.addEventListener("beforeunload", function (e) {
+        // The message shown in the confirmation dialog
+        const confirmationMessage =
+          "Page is reloading, all data will be reset. Are you sure?";
+
+        // Set the returnValue of the event to show the confirmation dialog
+        e.returnValue = confirmationMessage; // For most browsers
+        return confirmationMessage; // For some older browsers
+      });
+
+      function updateRemainingQuestionsText() {
+        const remainingQuestions =
+          predefinedQuestions.length - currentQuestionIndex - 1;
+        let remainingQuestionsText;
+
+        if (remainingQuestions === 0) {
+          remainingQuestionsText = "no questions";
+        } else if (remainingQuestions === 1) {
+          remainingQuestionsText = "1 more question";
+        } else {
+          remainingQuestionsText = `${remainingQuestions} more questions`;
+        }
+
+        document.getElementById(
+          "remaining-questions"
+        ).textContent = `Questions remaining: ${remainingQuestionsText}`;
+      }
+    </script>
+  </body>
+</html>
