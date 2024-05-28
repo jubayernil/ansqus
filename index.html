@@ -23,7 +23,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 12px;
         text-align: center;
-        width: 400px;
+        width: 700px;
       }
 
       .game-title {
@@ -143,7 +143,7 @@
         background-color: #fefefe;
         padding: 20px;
         border: 1px solid #888;
-        width: 350px;
+        width: 550px;
         border-radius: 10px;
         text-align: center;
         display: grid;
@@ -270,6 +270,11 @@
               to the next question.
             </li>
             <li>
+              2 seconds watch 6 seconds penalty, 1 seconds watch 3 seconds
+              penalty, 500 milliseconds watch 2 seconds penalty and 250
+              milliseconds seconds watch 1 second penalty.
+            </li>
+            <li>
               If the time runs out, you won't be able to answer any more
               questions.
             </li>
@@ -280,25 +285,41 @@
     </div>
     <script>
       const encodedPredefinedQuestions = [
-        "dG9tYXIgbmFtIGtpPw==",
-        "dHVtaSBrZW1vbiBhY2hvPw==",
-        "dHVtaSBraSBraGF1Pw==",
+        "SG93IGRvZXMgdGhlIGBtZXRhYCB0YWcgYWZmZWN0IHRoZSBiZWhhdmlvciBvZiBhIHdlYnBhZ2U/",
+        "V2hhdCBpcyB0aGUgZGlmZmVyZW5jZSBiZXR3ZWVuIGBjbGFzc2AgYW5kIGBpZGAgc2VsZWN0b3JzIGluIENTUz8=",
+        "V2hhdCBpcyB0aGUgZXZlbnQgbG9vcCBpbiBKYXZhU2NyaXB0IGFuZCBob3cgZG9lcyBpdCB3b3JrPw==",
+        "V2hhdCBpcyB0aGUgZGlmZmVyZW5jZSBiZXR3ZWVuIGBsZXRgIGBjb25zdGAgYW5kIGB2YXJgIGluIEphdmFTY3JpcHQ/",
+        "Q2FuIHlvdSBleHBsYWluIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4gc3luY2hyb25vdXMgYW5kIGFzeW5jaHJvbm91cyBjb2RlIGluIEphdmFTY3JpcHQ/",
+        "SG93IGRvIHByb21pc2VzIHdvcmsgaW4gSmF2YVNjcmlwdD8=",
+        "V2hhdCBhcmUgYXJyb3cgZnVuY3Rpb25zIGFuZCBob3cgZG8gdGhleSBkaWZmZXIgZnJvbSByZWd1bGFyIGZ1bmN0aW9ucyBpbiBKYXZhU2NyaXB0Pw==",
+        "Q2FuIHlvdSBleHBsYWluIHRoZSBjb25jZXB0IG9mIGB0aGlzYCBpbiBKYXZhU2NyaXB0Pw==",
+        "V2hhdCBpcyB0aGUgZGlmZmVyZW5jZSBiZXR3ZWVuIGA9PWAgYW5kIGA9PT1gIGluIEphdmFTY3JpcHQ/",
+        "Q2FuIHlvdSBleHBsYWluIGhvdyB0aGUgYGFzeW5jYCBhbmQgYGF3YWl0YCBrZXl3b3JkcyB3b3JrIGluIEphdmFTY3JpcHQ/",
       ];
 
-      const encodedAnswers = ["anViYXllcg==", "dmFsbw==", "a29sYQ=="];
+      const answers = [
+        "The `meta` tag provides metadata about the HTML document, which is used by browsers, search engines, and other web services. For example, the `charset` attribute within a `meta` tag specifies the character encoding for the document, ensuring proper display of characters. Additionally, `meta` tags can control page descriptions, keywords, author information, and viewport settings for responsive design.",
+        "In CSS, `class` and `id` selectors are used to apply styles to HTML elements, but they have different purposes. The `class` selector is used to apply styles to multiple elements, allowing for reusable and consistent styling across the document. It is defined with a period followed by the class name (e.g., `.example`). The `id` selector, on the other hand, is used to apply styles to a single, unique element. It is defined with a hash symbol followed by the id name (e.g., `#example`). Since IDs must be unique within a document, they are often used for specific elements that require unique styling.",
+        "The event loop is a mechanism in JavaScript that manages the execution of asynchronous code. JavaScript is single-threaded, meaning it can only execute one task at a time. When an asynchronous operation (like a setTimeout or an HTTP request) is performed, it gets offloaded to the web APIs, and the main thread continues executing other code. Once the asynchronous operation is complete, the callback function is pushed to the event queue. The event loop continuously checks the event queue and, if the call stack is empty, it pushes the callback onto the call stack for execution. This ensures that asynchronous code is executed in a non-blocking manner.",
+        "`var`, `let`, and `const` are used to declare variables in JavaScript, but they have different scoping and usage rules. `var` is function-scoped and can be redeclared and updated within its scope. It is also hoisted to the top of its scope, meaning it can be used before it is declared. `let` is block-scoped, meaning it is only accessible within the block where it is defined, and cannot be redeclared within the same scope but can be updated. `const` is also block-scoped but cannot be updated or redeclared, making it suitable for constants or values that should not change.",
+        "Synchronous code in JavaScript is executed sequentially, one statement at a time, and each statement must complete before the next one begins. This can lead to blocking behavior if a statement takes a long time to execute. Asynchronous code, on the other hand, allows the program to continue executing other tasks while waiting for an operation to complete. Asynchronous operations often involve callbacks, promises, or async/await syntax to handle the completion of these tasks without blocking the main thread.",
+        "Promises are a way to handle asynchronous operations in JavaScript, providing a more readable and manageable approach compared to callbacks. A promise represents a value that may be available now, in the future, or never. It has three states: pending, fulfilled, and rejected. When a promise is created, it starts in the pending state. Once the asynchronous operation is complete, the promise is either fulfilled (with a value) or rejected (with a reason). Promises have `then` and `catch` methods to handle the fulfilled and rejected states, respectively, allowing for chaining and more structured error handling.",
+        "Arrow functions are a shorthand syntax for writing function expressions in JavaScript, introduced in ES6. They differ from regular functions in several ways. Arrow functions do not have their own `this` context; instead, they inherit `this` from the enclosing scope, making them useful for preserving the context in callbacks. They also do not have the `arguments` object, which means you cannot access the function's arguments without explicitly passing them. Arrow functions have a more concise syntax, omitting the `function` keyword and using `=>` to separate the parameter list from the function body.",
+        "In JavaScript, `this` is a keyword that refers to the context in which a function is executed. Its value can vary depending on how the function is called. In the global context, `this` refers to the global object (window in browsers). In object methods, `this` refers to the object that owns the method. In constructors, `this` refers to the instance being created. The value of `this` can also be explicitly set using `call`, `apply`, or `bind`. Understanding `this` is crucial for writing correct and predictable code, especially when working with object-oriented programming and callbacks.",
+        "The `==` operator in JavaScript is used for loose equality comparison, meaning it performs type coercion if the operands are of different types before comparing their values. On the other hand, the `===` operator is used for strict equality comparison, meaning it compares both the value and the type of the operands without performing type coercion. Using `===` is generally recommended to avoid unexpected behavior caused by type coercion.",
+        "The `async` and `await` keywords in JavaScript provide a more readable and intuitive way to work with promises and asynchronous code. The `async` keyword is used to define an asynchronous function, which always returns a promise. The `await` keyword can only be used inside an `async` function and pauses the execution of the function until the promise is resolved or rejected. This allows for writing asynchronous code in a synchronous-like manner, making it easier to understand and manage.",
+      ];
 
       let predefinedQuestions = [];
-      let answers = [];
 
-      encodedPredefinedQuestions.forEach((encodedQuestion, index) => {
+      encodedPredefinedQuestions.forEach((encodedQuestion) => {
         predefinedQuestions.push(atob(encodedQuestion));
-        answers.push(atob(encodedAnswers[index]));
       });
 
       let currentQuestionIndex = 0;
       let startTime;
       let totalStartTime;
-      const totalQuizTime = 10 * 60 * 1000; // 10 minutes in milliseconds
+      const totalQuizTime = 12 * 60 * 1000; // 10 minutes in milliseconds
       let intervalId;
       let questionTimes = [];
       let retryCount = 0; // Initialize retry count
@@ -310,16 +331,30 @@
       updateRemainingQuestionsText();
 
       function calculateMatchPercentage(str1, str2) {
-        const length = Math.max(str1.length, str2.length);
-        let matches = 0;
-
-        for (let i = 0; i < length; i++) {
-          if (str1[i] === str2[i]) {
-            matches++;
+        function getBigrams(str) {
+          const s = str.toLowerCase();
+          const v = new Set();
+          for (let i = 0; i < s.length - 1; i++) {
+            v.add(s.substr(i, 2));
           }
+          return v;
         }
 
-        return ((matches / length) * 100).toFixed(2);
+        const bigrams1 = getBigrams(str1);
+        const bigrams2 = getBigrams(str2);
+
+        const intersection = new Set(
+          [...bigrams1].filter((x) => bigrams2.has(x))
+        ).size;
+
+        const totalBigrams = bigrams1.size + bigrams2.size;
+
+        if (totalBigrams === 0) {
+          return 100;
+        }
+
+        const diceCoefficient = (2.0 * intersection) / totalBigrams;
+        return (diceCoefficient * 100).toFixed(2);
       }
 
       function nextQuestion() {
